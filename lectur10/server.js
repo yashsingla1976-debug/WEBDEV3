@@ -1,52 +1,62 @@
-const express = require('express');
-const app = express();
-const PORT = 3000;
+const express=require("express");
+const app=express();
+const PORT=3000
 
-app.use(express.json()); // it handles the json data from the request body
-const students = [
-    { rollno: 1, name: "krishn", Section: 'core d' },
-    { rollno: 2, name: "ayan", Section: 'core d' },
-    { rollno: 3, name: "anuj", Section: 'core d' },
-    { rollno: 4, name: "kunal", Section: 'core d' },
-    { rollno: 5, name: "sachin", Section: 'core d'},
-];
+app.use(express.json()); //it handles the json data coming from the client//encode
 
-app.get('/students', (req, res) => {
-    res.json(students);
+const students=[
+    {rollNo:1, name:"Krishn", section:"Core-B"},
+    {rollNo:2, name:"ayan", section:"Core-B"},
+    {rollNo:3, name:"anuj", section:"Core-B"},
+    {rollNo:4, name:"kunal", section:"Core-B"},
+    {rollNo:5, name:"sukhwinder", section:"Core-B"}
+]
+///Read Operation
+app.get("/students",(req,res)=>{
+    res.json(students)
 })
 
-// read option 
-app.get("/students/:rollno", (req, res) => {
-    const id = req.params.rollno;
-    const student = students.find((student) => student.rollno === Number(id));
-    if (!student) {
-        return res.status(404).json({ message: "Student not found" });
+//Read operation with id
+app.get("/students/:rollNo",(req,res)=>{
+    const id=req.params.rollNo;
+    const student=students.find((student)=>student.rollNo===Number(id));
+    if(!student){
+        res.status(404).json({success:false, message:"student not found"});
     }
-    res.json(student);
-});
+    res.json({success:true,student});
+})
 
-// create
-app.post("/students", (req, res) => {
+
+//Create
+app.post("/students",(req,res)=>{
     const data=req.body;
-    console.log(data);
-    students.push({rollno:students.length+1, ...data});
-    res.json({ success: true, message: "Student created successfully", data });
-});
+    students.push({rollNo:students.length+1,...data});
+    res.json({success:true, message:"student created successfully",data});
+})
 
-// update
-app.put("/students/:rollno", (req, res) => {
-    const id = req.params.rollno;
-    const data = req.body;
-    const student = students.find((student) => student.rollno === Number(id));
-    if (!student) {
-        return res.status(404).json({ message: "Student not found" });
+////update
+app.put("/students/:rollNo",(req,res)=>{
+    const id=req.params.rollNo;
+    const data=req.body;
+    const student=students.find((student)=>student.rollNo===Number(id));
+    if(!student){
+        res.status(404).json({success:false, message:"student not found"});
     }
-    student.name = data.name
-    student.Section = data.Section
-    res.json({ success: true, student });
-});
+    student.name=data.name??student.name;
+    student.section=data.section??student.section;
+    res.json({success:true,student});
+})
 
-// detele
+//delete
 
+app.delete("/students/:rollNo",(req,res)=>{
+    const id=req.params.rollNo;
+    const student=students.find((student)=>student.rollNo===Number(id));
+    if(!student){
+        res.status(404).json({success:false, message:"student not found"});
+    }
+    students.splice(students.indexOf(student),1);
+    res.json({success:true, message:"student deleted successfully"});
+})
 
-app.listen(PORT, () => console.log(`Server is running on port 3000`));
+app.listen(PORT,()=>console.log("server is running on port 3000"));
